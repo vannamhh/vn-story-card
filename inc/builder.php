@@ -318,6 +318,17 @@ function vnsc_builder_slider() {
 						),
 					),
 				),
+				'advanced_options' => array(
+					'type'    => 'group',
+					'heading' => __( 'Nâng cao', 'vn-story-card' ),
+					'options' => array(
+						'class' => array(
+							'type'    => 'textfield',
+							'heading' => __( 'Class', 'vn-story-card' ),
+							'default' => '',
+						),
+					),
+				),
 			),
 		)
 	);

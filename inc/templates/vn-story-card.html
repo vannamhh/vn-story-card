@@ -1,0 +1,31 @@
+<div id="{{::$id}}"
+  class="{{ shortcode.options.visibility }} {{ shortcode.options.class }}"
+  style="display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: flex-start; width: 100%; gap: 20px; padding: 10px 0;">
+
+  <!-- Left Column: Title + Button -->
+  <div style="flex: 1 1 50%; min-width: 0;">
+    <div class="text is-xxlarge leading-125 mb">
+      <p ng-if="shortcode.options.title">{{shortcode.options.title}}</p>
+      <p ng-if="!shortcode.options.title" style="opacity: 0.4; font-style: italic;">Tiêu đề bài viết...</p>
+    </div>
+
+    <a class="button primary is-normal radius-99">
+      <span ng-if="shortcode.options.buttonText">{{shortcode.options.buttonText}}</span>
+      <span ng-if="!shortcode.options.buttonText">Nội dung câu chuyện</span>
+    </a>
+  </div>
+
+  <!-- Right Column: Image -->
+  <div style="flex: 1 1 50%; min-width: 0;">
+    <div style="position: relative; padding-top: 71.89%; overflow: hidden; border-radius: 4px;">
+      <img ng-if="shortcode.options.image"
+        wp-attachment="shortcode.options.image"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+        loading="lazy" decoding="async">
+      <div ng-if="!shortcode.options.image"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px;">
+        <span>Ảnh bài viết</span>
+      </div>
+    </div>
+  </div>
+</div>

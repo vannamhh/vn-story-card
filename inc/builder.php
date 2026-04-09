@@ -44,7 +44,9 @@ function vnsc_builder_element() {
 							'full_width' => true,
 							'config'     => array(
 								'placeholder' => __( 'Chọn bài viết...', 'vn-story-card' ),
-								'postSelect'  => array(),
+								'postSelect'  => array(
+								'posts_per_page' => -1,
+							),
 							),
 						),
 					),

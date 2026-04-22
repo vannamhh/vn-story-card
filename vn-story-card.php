@@ -3,7 +3,7 @@
  * Plugin Name: VN Story Card
  * Plugin URI: https://ztavi.com
  * Description: Custom story card shortcode for Flatsome theme - displays success stories with post selection
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Van Nam
  * Author URI: https://ztavi.com
  * Text Domain: vn-story-card

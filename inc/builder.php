@@ -339,6 +339,65 @@ function vnsc_builder_slider() {
 add_action( 'ux_builder_setup', 'vnsc_builder_slider' );
 
 /**
+ * Override UX Builder post search to be case-insensitive.
+ *
+ * Flatsome's built-in `ux_builder_post_search` filter (priority 500) builds a
+ * raw LIKE clause that may be case-sensitive depending on the database collation.
+ * This filter runs at priority 600 (after Flatsome's) and replaces the WHERE
+ * clause with a LOWER()-wrapped version so searches work regardless of whether
+ * the user types in uppercase or lowercase.
+ *
+ * @since 1.2.0
+ * @param string   $search   The SQL WHERE search clause built by WordPress/Flatsome.
+ * @param WP_Query $wp_query The current WP_Query instance.
+ * @return string Modified search clause with case-insensitive LIKE.
+ */
+function vnsc_case_insensitive_post_search( $search, $wp_query ) {
+	global $wpdb;
+
+	// Only intercept UX Builder post-select AJAX calls.
+	if (
+		empty( $_GET['action'] ) ||
+		'ux_builder_search_posts' !== $_GET['action'] // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	) {
+		return $search;
+	}
+
+	$q = $wp_query->query_vars;
+
+	if ( empty( $q['search_terms'] ) ) {
+		return $search;
+	}
+
+	$n          = ! empty( $q['exact'] ) ? '' : '%';
+	$search_sql = '';
+	$searchand  = '';
+
+	foreach ( (array) $q['search_terms'] as $term ) {
+		// Normalise the term to lowercase for a case-insensitive match.
+		$term_lower = $wpdb->esc_like( mb_strtolower( $term, 'UTF-8' ) );
+
+		$search_sql .= $wpdb->prepare(
+			"{$searchand}(LOWER({$wpdb->posts}.post_title) LIKE %s)",
+			"{$n}{$term_lower}{$n}"
+		);
+		$searchand   = ' AND ';
+	}
+
+	if ( ! empty( $search_sql ) ) {
+		$search = " AND ({$search_sql}) ";
+
+		if ( ! is_user_logged_in() ) {
+			$search .= " AND ({$wpdb->posts}.post_password = '') ";
+		}
+	}
+
+	return $search;
+}
+
+add_filter( 'posts_search', 'vnsc_case_insensitive_post_search', 600, 2 );
+
+/**
  * Load and return a template file from the plugin's templates directory.
  *
  * @since 1.0.0

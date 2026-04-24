@@ -374,11 +374,14 @@ function vnsc_case_insensitive_post_search( $search, $wp_query ) {
 	$searchand  = '';
 
 	foreach ( (array) $q['search_terms'] as $term ) {
-		// Normalise the term to lowercase for a case-insensitive match.
+		// Dùng chuỗi gốc cho trường hợp nhập chính xác.
+		$term_exact = $wpdb->esc_like( $term );
+		// Normalise the term to lowercase for a case-insensitive match fallback.
 		$term_lower = $wpdb->esc_like( mb_strtolower( $term, 'UTF-8' ) );
 
 		$search_sql .= $wpdb->prepare(
-			"{$searchand}(LOWER({$wpdb->posts}.post_title) LIKE %s)",
+			"{$searchand}( ({$wpdb->posts}.post_title LIKE %s) OR (LOWER({$wpdb->posts}.post_title) LIKE %s) )",
+			"{$n}{$term_exact}{$n}",
 			"{$n}{$term_lower}{$n}"
 		);
 		$searchand   = ' AND ';
